@@ -1,0 +1,38 @@
+для того что бы в композере зайти в путь, обязательно надо прописывать вначале путь cd а потом писать папку cd domains\Framework
+{
+  "autoload": {
+    "psr-4": {
+      "system\\": "system/core",  если встретится пространство имен system\  то все классы ищи в папке system/core
+      "app\\": "app"
+    }
+  },
+  "require": {}
+}
+Framework/product/add сначала идет контроллер а потом имя метода
+.htaccess   файл вебсервера apache
+AddDefaultCharset utf-8   установка кодировки
+RewriteEngine On   Модуль перенаправления пользователя
+RewriteRule (.*) public/$1   берем все запросы и перенаправляем в папку, запоминается запрос в переменную $1
+все запросы, которые идут к несуществующим файлам, перенаправляются на front.php
+в папке public .htaccess
+RewriteCond %{REQUEST_FILENIME} !-f
+RewriteCond %{REQUEST_FILENIME} !-d
+RewriteRule (.*) front.php?$1 [L,QSA]
+условие перенаправления, если запрос не касается конкретного файла или папки, то отправляем на index.php методом GET переменную $1
+Добавляются флаги [L,QSA] L - последнее правило, другие срабатывать не должны. QSA - дополнительные параметры отбрасываться не доджны и должны доополнятся
+В   front.php   подключаем  require_once dirname(__DIR__) . "/config/init.php";
+Вводим константу   define("DEBUG", 1);  1 означает режим разработки, когда выводятся ошибки и 0 это режим продакшн, когда ошибок пользователь не должен видеть
+define("ROOT", dirname(__DIR__));  указывает на корень нашего сайта
+define("WWW", ROOT . '/public'); указывает на публичную папку
+Все значения констант начинаются с / и кончаются без него
+require_once ROOT . '/vendor/autoload.php';  подключение компосера в init
+
+function autoloader($class)
+{
+    $class = str_replace("\\", "/", $class);   \\ один слэ экранирует другой
+    $file = __DIR__ . "/{$class}.php";
+    if(file_exists($file)){
+        require_once $file;
+    }
+}
+spl_autoload_register('autoloader');  подключение автолодера
